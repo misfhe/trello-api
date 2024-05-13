@@ -1,4 +1,4 @@
-### Requirements - Thông tin của bộ Code Base này - Chuẩn các phiên bản dưới đây để bắt đầu học: (Semantic Versioning)
+### Requirements Semantic Versioning
 
 ```
 * nodejs = v18.16.0
