@@ -4,6 +4,7 @@ import exitHook from 'async-exit-hook'
 import { CONNECT_DB, GET_DB, CLOSE_DB } from './config/mongodb'
 import { env } from '~/config/environment'
 import { APIs_V1} from '~/routes/v1'
+import { errorHandlingMiddleware } from '~/middlewares/errorHandlingMiddleware'
 
 const START_SERVER = () =>{
   const app = express()
@@ -13,6 +14,13 @@ const START_SERVER = () =>{
 
   //Use api v1
   app.use('/v1', APIs_V1)
+
+  //middleware xử lý lỗi tập trung
+  app.use(errorHandlingMiddleware)
+  // app.use((err, req, res, next) => {
+  //   console.error(err.stack)
+  //   res.status(500).send('Something broke!')
+  // })
 
   app.get('/', (req, res) => {
     // console.log(await GET_DB().listCollections().toArray())
