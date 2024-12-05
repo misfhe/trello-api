@@ -1,7 +1,8 @@
 /* eslint-disable no-console */
-import Joi from 'joi'
+import Joi, { required } from 'joi'
 import { StatusCodes } from 'http-status-codes'
 import ApiError from '~/utils/ApiError'
+import { BOARD_TYPES } from '~/utils/constants'
 
 const createNew = async(req, res, next) => {
   const correctCondition = Joi.object({
@@ -18,7 +19,8 @@ const createNew = async(req, res, next) => {
       'string.min': 'Description min 3 chars',
       'string.max': 'Description max 50 chars',
       'string.trim': 'Description must not have leading or trailing whitespaces'
-    })
+    }),
+    type: Joi.string().valid(BOARD_TYPES.PUBLIC, BOARD_TYPES.PRIVATE).required()
   })
   try {
     // set abortEarly to false for logging all errors at once
