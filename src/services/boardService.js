@@ -2,6 +2,7 @@ import { slugify } from '~/utils/formatters'
 import { boardModel } from '~/models/boardModel'
 import ApiError from '~/utils/ApiError'
 import { StatusCodes } from 'http-status-codes'
+import { cloneDeep } from 'lodash'
 
 const createNew = async (reqBody) => {
   try {
@@ -34,7 +35,16 @@ const getDetails = async (boardId) => {
       throw new ApiError(StatusCodes.NOT_FOUND, 'Board not found')
     }
 
-    return board
+    const resBoard = cloneDeep(board)
+
+    resBoard.columns.forEach(column => {
+      //MongoDB support .equals
+      column.cards = resBoard.cards.filter(card => card.columnId.equals(column._id))
+    })
+
+    delete resBoard.cards
+
+    return resBoard
   } catch (error) {
     //
   }
