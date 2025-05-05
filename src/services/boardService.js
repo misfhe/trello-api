@@ -24,7 +24,9 @@ const createNew = async (reqBody) => {
 
     return getNewBoard
   } catch (error) {
-    //
+    throw error
+  } finally {
+    //Làm các xử lý cuối cùng
   }
 }
 
@@ -34,7 +36,6 @@ const getDetails = async (boardId) => {
     if (!board) {
       throw new ApiError(StatusCodes.NOT_FOUND, 'Board not found')
     }
-
     const resBoard = cloneDeep(board)
 
     resBoard.columns.forEach(column => {
@@ -45,8 +46,9 @@ const getDetails = async (boardId) => {
     delete resBoard.cards
 
     return resBoard
-  } catch (error) {
-    //
+  } catch (error) { throw error }
+   finally {
+    //Làm các xử lý cuối cùng
   }
 }
 
