@@ -1,5 +1,7 @@
 import { slugify } from '~/utils/formatters'
 import { boardModel } from '~/models/boardModel'
+import { columnModel } from '~/models/columnModel'
+import { cardModel } from '~/models/cardModel'
 import ApiError from '~/utils/ApiError'
 import { StatusCodes } from 'http-status-codes'
 import { cloneDeep } from 'lodash'
@@ -23,11 +25,7 @@ const createNew = async (reqBody) => {
     //Notify mail về khi có board mới tạo
 
     return getNewBoard
-  } catch (error) {
-    throw error
-  } finally {
-    //Làm các xử lý cuối cùng
-  }
+  } catch (error) { throw error }
 }
 
 const getDetails = async (boardId) => {
@@ -47,9 +45,6 @@ const getDetails = async (boardId) => {
 
     return resBoard
   } catch (error) { throw error }
-   finally {
-    //Làm các xử lý cuối cùng
-  }
 }
 
 const update = async (boardId, reqBody) => {
@@ -67,8 +62,31 @@ const update = async (boardId, reqBody) => {
   }
 }
 
+const moveCardToDifferentColumn = async (reqBody) => {
+  try {
+    //Cập nhật bảng cardOrderIds của column ban đầu chứa nó
+    await columnModel.update(reqBody.prevColumnId, {
+      cardOrderIds: reqBody.prevCardOrderIds,
+      updatedAt: Date.now()
+    })
+    //Cập nhật bảng cardOrderIds của column mới
+    await columnModel.update(reqBody.nextColumnId, {
+      cardOrderIds: reqBody.nextCardOrderIds,
+      updatedAt: Date.now()
+    })
+    //Cập nhật lại trường columnId của card
+    await cardModel.update(reqBody.currentCardId, {
+      columnId: reqBody.nextColumnId,
+      updatedAt: Date.now()
+    })
+
+    return { updateResult: 'ok' }
+  } catch (error) { throw error }
+}
+
 export const boardService = {
   createNew,
   getDetails,
-  update
+  update,
+  moveCardToDifferentColumn
 }

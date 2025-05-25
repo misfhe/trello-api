@@ -71,7 +71,7 @@ const getDetails = async (id) =>{
 //Push một giá trị columnId vào cuối mảng columnOrderIds
 const pushColumnOrderIds = async (column) => {
   try {
-    return result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
+    return await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
       { _id: new ObjectId(column.boardId) },
       { $push: { columnOrderIds: new ObjectId(column._id) } },
       { returnDocument: 'after' }
@@ -89,7 +89,12 @@ const update = async (boardId, updateData) => {
         delete updateData[fieldName]
       }
     })
-    return result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
+
+    if( updateData.columnOrderIds ) {
+      updateData.columnOrderIds = updateData.columnOrderIds.map( _id => (new ObjectId(_id)) )
+    }
+
+    return await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
       { _id: new ObjectId(boardId) },
       { $set: updateData },
       { returnDocument: 'after' }
