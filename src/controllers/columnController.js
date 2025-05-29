@@ -17,7 +17,16 @@ const update = async(req, res, next) => {
   } catch (error) { next(error) }
 }
 
+const deleteItem = async(req, res, next) => {
+  try {
+    const columnId = req.params.id
+    const rs = await columnService.deleteItem(columnId)
+    res.status(StatusCodes.OK).json(rs)
+  } catch (error) { next(error) }
+}
+
 export const columnController = {
   createNew,
-  update
+  update,
+  deleteItem
 }
