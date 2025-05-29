@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import Joi from 'joi'
+import Joi, { required } from 'joi'
 import { StatusCodes } from 'http-status-codes'
 import ApiError from '~/utils/ApiError'
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '~/utils/validators'
@@ -42,7 +42,24 @@ const update = async(req, res, next) => {
 
 }
 
+const deleteItem = async(req, res, next) => {
+  const correctCondition = Joi.object({
+    // nếu cần làm tính năng di chuyển column sang board khác thì bỏ comment dòng dưới
+    id: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
+  })
+
+  try {
+    // set abortEarly to false for logging all errors at once
+    await correctCondition.validateAsync(req.params)
+    next()
+  } catch (error) {
+    next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, new Error(error).message))
+  }
+
+}
+
 export const columnValidation = {
   createNew,
-  update
+  update,
+  deleteItem
 }
